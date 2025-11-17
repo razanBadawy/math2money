@@ -1,0 +1,31 @@
+import 'package:flutter/material.dart';
+
+class CalcButtonWidget extends StatelessWidget {
+  const CalcButtonWidget({
+    super.key,
+    required this.labelColor,
+    required this.boxColor,
+    required this.content,
+  });
+
+  final Color labelColor;
+  final Color boxColor;
+  final String content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: boxColor,
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Text(
+          content,
+          style: TextStyle(fontSize: 50, color: labelColor),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
