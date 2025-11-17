@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:math2money/cubit/calc.cubit.dart';
+import 'package:math2money/cubit/first_operator.cubit.dart';
+import 'package:math2money/cubit/operation.cubit.dart';
+import 'package:math2money/cubit/second_operator.cubit.dart';
 import 'package:math2money/widgets/calc_buttons.widget.dart';
 import 'package:math2money/widgets/conv_result.widget.dart';
 import 'package:math2money/widgets/from_button.widget.dart';
@@ -21,7 +25,6 @@ class CurrencyConvertorScreen extends StatelessWidget {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            // OperationConvertorWidget(),
             SizedBox(
               height: headerHeight,
               child: SingleChildScrollView(
@@ -48,7 +51,13 @@ class CurrencyConvertorScreen extends StatelessWidget {
                     SizedBox(height: 10.0),
                     Divider(thickness: 1.0, color: Colors.grey),
                     SizedBox(height: 10),
-                    CalcButtonsWidget(isOperation: false),
+                    CalcButtonsWidget(
+                      isOperation: false,
+                      firstOperatorCubit: FirstOperatorCubit(),
+                      operationCubit: OperationCubit(),
+                      secondOperatorCubit: SecondOperatorCubit(),
+                      calcCubit: CalcCubit(),
+                    ),
                     SizedBox(height: 20),
                   ],
                 ),
