@@ -16,6 +16,7 @@ class CalcButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
+        height: 70,
         decoration: BoxDecoration(
           color: boxColor,
           borderRadius: BorderRadius.circular(9),

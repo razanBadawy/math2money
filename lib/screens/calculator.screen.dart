@@ -20,13 +20,14 @@ class CalculatorScreen extends StatelessWidget {
             SolutionWidget(),
             SizedBox(height: 40.0),
 
-            OptionsWidget(),
+            OptionsWidget(isOption: true,),
 
             SizedBox(height: 10.0),
             Divider(thickness: 1.0, color: Colors.grey),
             SizedBox(height: 10),
 
-            CalcButtonsWidget(),
+            CalcButtonsWidget(isOperation: true),
+            SizedBox(height: 20),
           ],
         ),
       ),
