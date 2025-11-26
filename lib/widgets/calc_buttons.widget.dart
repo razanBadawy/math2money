@@ -21,7 +21,7 @@ class CalcButtonsWidget extends StatelessWidget {
               SizedBox(width: 20),
 
               CalcButtonWidget(
-                labelColor: Color(0xfff66ff7f),
+                labelColor: Color(0xff66ff7f),
                 boxColor: Colors.grey,
                 content: '()',
               ),
@@ -29,7 +29,7 @@ class CalcButtonsWidget extends StatelessWidget {
               SizedBox(width: 20),
 
               CalcButtonWidget(
-                labelColor: Color(0xfff66ff7f),
+                labelColor: Color(0xff66ff7f),
                 boxColor: Colors.grey,
                 content: '%',
               ),
@@ -37,7 +37,7 @@ class CalcButtonsWidget extends StatelessWidget {
               SizedBox(width: 20),
 
               CalcButtonWidget(
-                labelColor: Color(0xfff66ff7f),
+                labelColor: Color(0xff66ff7f),
                 boxColor: Colors.grey,
                 content: '÷',
               ),
@@ -74,7 +74,7 @@ class CalcButtonsWidget extends StatelessWidget {
             if (isOperation == true) ...[
               SizedBox(width: 20),
               CalcButtonWidget(
-                labelColor: Color(0xfff66ff7f),
+                labelColor: Color(0xff66ff7f),
                 boxColor: Colors.grey,
                 content: 'x',
               ),
@@ -111,7 +111,7 @@ class CalcButtonsWidget extends StatelessWidget {
             if (isOperation == true) ...[
               SizedBox(width: 20),
               CalcButtonWidget(
-                labelColor: Color(0xfff66ff7f),
+                labelColor: Color(0xff66ff7f),
                 boxColor: Colors.grey,
                 content: '-',
               ),
@@ -147,7 +147,7 @@ class CalcButtonsWidget extends StatelessWidget {
             if (isOperation == true) ...[
               SizedBox(width: 20),
               CalcButtonWidget(
-                labelColor: Color(0xfff66ff7f),
+                labelColor: Color(0xff66ff7f),
                 boxColor: Colors.grey,
                 content: '+',
               ),
@@ -187,7 +187,7 @@ class CalcButtonsWidget extends StatelessWidget {
               SizedBox(width: 20),
               CalcButtonWidget(
                 labelColor: Colors.black,
-                boxColor: Color(0xfff66ff7f),
+                boxColor: Color(0xff66ff7f),
                 content: '=',
               ),
             ],

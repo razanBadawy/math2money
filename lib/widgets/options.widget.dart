@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class OptionsWidget extends StatelessWidget {
   final bool isOption;
-  const OptionsWidget({Key? key, required this.isOption}) : super(key: key);
+  const OptionsWidget({super.key, required this.isOption});
 
   @override
   Widget build(BuildContext context) {
