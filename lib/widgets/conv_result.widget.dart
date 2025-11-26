@@ -1,38 +1,33 @@
 import 'package:flutter/material.dart';
 
 class ConvResultWidget extends StatelessWidget {
-  const ConvResultWidget({super.key});
+  final String resultText;
+  final String currencyCode;
+
+  const ConvResultWidget({
+    super.key,
+    required this.resultText,
+    required this.currencyCode,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.centerLeft,
       margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20.0),
       decoration: BoxDecoration(
-        color: Colors.white24,
+        color: Colors.green[700],
         borderRadius: BorderRadius.circular(15.0),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 5.0),
           Text(
-            'Converted Amount',
-            style: TextStyle(fontSize: 15, color: Colors.white),
-          ),
-          SizedBox(height: 5.0),
-          Text(
-            '€6.85',
-            style: TextStyle(
-              fontSize: 28,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 5.0),
-          Text(
-            '1 USD = 0.9200 EUR',
-            style: TextStyle(
-              fontSize: 12,
+            '$resultText $currencyCode',
+            style: const TextStyle(
+              fontSize: 24,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),

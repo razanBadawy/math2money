@@ -28,7 +28,7 @@ final GoRouter router = GoRouter(
             GoRoute(
               name: 'currency-converter',
               path: '/currency-converter',
-              builder: (context, state) => const CurrencyConvertorScreen(),
+              builder: (context, state) => CurrencyConvertorScreen(),
               routes: <RouteBase>[],
             ),
           ],
