@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:math2money/widgets/calc_buttons.widget.dart';
 import 'package:math2money/widgets/conv_result.widget.dart';
 import 'package:math2money/widgets/from_button.widget.dart';
-import 'package:math2money/widgets/operation_convertor.widget.dart';
 import 'package:math2money/widgets/options.widget.dart';
 import 'package:math2money/widgets/to_button.widget.dart';
 
 class CurrencyConvertorScreen extends StatelessWidget {
-  const CurrencyConvertorScreen({Key? key}) : super(key: key);
+  const CurrencyConvertorScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ToButtonWidget extends StatelessWidget {
-  const ToButtonWidget({Key? key}) : super(key: key);
+  const ToButtonWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,6 @@ class ToButtonWidget extends StatelessWidget {
             children: [
               Row(
                 children: const [
-                
                   Text(
                     'EUR - Euro',
                     style: TextStyle(color: Colors.white, fontSize: 16),

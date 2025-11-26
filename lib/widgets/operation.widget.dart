@@ -13,12 +13,10 @@ const OperationWidget({ super.key });
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Container(
-                    child: Text(
-                      '2+7',
-
-                      style: TextStyle(fontSize: 50, color: Colors.white),
-                    ),
+                  Text(
+                    '2+7',
+                  
+                    style: TextStyle(fontSize: 50, color: Colors.white),
                   ),
                 ],
               ),
