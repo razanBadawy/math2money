@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OperationConvertorWidget extends StatelessWidget {
-  const OperationConvertorWidget({Key? key}) : super(key: key);
+  const OperationConvertorWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

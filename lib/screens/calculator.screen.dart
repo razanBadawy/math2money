@@ -5,7 +5,7 @@ import 'package:math2money/widgets/options.widget.dart';
 import 'package:math2money/widgets/solution.widget.dart';
 
 class CalculatorScreen extends StatelessWidget {
-  const CalculatorScreen({Key? key}) : super(key: key);
+  const CalculatorScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

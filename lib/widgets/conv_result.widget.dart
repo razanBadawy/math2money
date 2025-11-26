@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ConvResultWidget extends StatelessWidget {
-  const ConvResultWidget({Key? key}) : super(key: key);
+  const ConvResultWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
