@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:math2money/cubit/calc.cubit.dart';
 import 'package:math2money/cubit/calc_display.ciubit.dart';
 import 'package:math2money/cubit/calc_history.cubit.dart';
+import 'package:math2money/cubit/calc_options.cubit.dart';
 import 'package:math2money/cubit/first_operator.cubit.dart';
 import 'package:math2money/cubit/operation.cubit.dart';
 import 'package:math2money/cubit/second_operator.cubit.dart';
@@ -24,6 +25,12 @@ class CalculatorScreen extends StatelessWidget {
     final calcHistoryCubit = CalcHistoryCubit();
     final calcDisplayCubit = CalcDisplayCubit();
 
+    final calcOptionsCubit = CalcOptionsCubit(
+      firstOperatorCubit: firstOperatorCubit,
+      secondOperatorCubit: secondOperatorCubit,
+      operationCubit: operationCubit,
+    );
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey[900],
@@ -35,7 +42,6 @@ class CalculatorScreen extends StatelessWidget {
             BlocProvider<SecondOperatorCubit>(
               create: (context) => secondOperatorCubit,
             ),
-
             BlocProvider<OperationCubit>(create: (context) => operationCubit),
             BlocProvider<CalcCubit>(create: (context) => calcCubit),
             BlocProvider<CalcHistoryCubit>(
@@ -45,7 +51,6 @@ class CalculatorScreen extends StatelessWidget {
               create: (context) => calcDisplayCubit,
             ),
           ],
-
           child: Column(
             children: [
               OperationWidget(
@@ -54,40 +59,48 @@ class CalculatorScreen extends StatelessWidget {
                 secondOperatorCubit: secondOperatorCubit,
               ),
 
-              Spacer(),
+              const Spacer(),
+
               SolutionWidget(calcCubit: calcCubit),
 
-              SizedBox(height: 130.0),
+              const SizedBox(height: 130.0),
+
               OptionsWidget(
                 isOption: true,
                 firstOperatorCubit: firstOperatorCubit,
                 secondOperatorCubit: secondOperatorCubit,
                 operationCubit: operationCubit,
                 calcDisplayCubit: calcDisplayCubit,
+                calcOptionsCubit: calcOptionsCubit,
               ),
 
-              SizedBox(height: 10.0),
-              Divider(thickness: 1.0, color: Colors.grey),
-              SizedBox(height: 10),
-              BlocBuilder(
+              const SizedBox(height: 10.0),
+              const Divider(thickness: 1.0, color: Colors.grey),
+              const SizedBox(height: 10),
+
+              BlocBuilder<CalcDisplayCubit, bool>(
                 bloc: calcDisplayCubit,
-                builder: (context, state) => calcDisplayCubit.state == true
-                    ? CalcButtonsWidget(
-                        isOperation: true,
-                        firstOperatorCubit: firstOperatorCubit,
-                        operationCubit: operationCubit,
-                        secondOperatorCubit: secondOperatorCubit,
-                        calcCubit: calcCubit,
+                builder: (context, state) {
+                  if (state) {
+                    return CalcButtonsWidget(
+                      isOperation: true,
+                      firstOperatorCubit: firstOperatorCubit,
+                      operationCubit: operationCubit,
+                      secondOperatorCubit: secondOperatorCubit,
+                      calcCubit: calcCubit,
+                      calcHistoryCubit: calcHistoryCubit,
+                    );
+                  } else {
+                    return Expanded(
+                      child: CalcHistoryWidget(
                         calcHistoryCubit: calcHistoryCubit,
-                      )
-                    : Expanded(
-                        child: CalcHistoryWidget(
-                          calcHistoryCubit: calcHistoryCubit,
-                        ),
                       ),
+                    );
+                  }
+                },
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),

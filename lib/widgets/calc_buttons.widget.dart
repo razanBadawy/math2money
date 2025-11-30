@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:math2money/cubit/calc.cubit.dart';
 import 'package:math2money/cubit/calc_history.cubit.dart';
+import 'package:math2money/cubit/calc_keypad.cubit.dart';
 import 'package:math2money/cubit/first_operator.cubit.dart';
 import 'package:math2money/cubit/operation.cubit.dart';
 import 'package:math2money/cubit/second_operator.cubit.dart';
@@ -18,6 +19,7 @@ class CalcButtonsWidget extends StatelessWidget {
     required this.calcHistoryCubit,
     this.onValueChanged,
   });
+
   final FirstOperatorCubit firstOperatorCubit;
   final OperationCubit operationCubit;
   final SecondOperatorCubit secondOperatorCubit;
@@ -27,6 +29,14 @@ class CalcButtonsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final keypadCubit = CalcKeypadCubit(
+      firstOperatorCubit: firstOperatorCubit,
+      operationCubit: operationCubit,
+      secondOperatorCubit: secondOperatorCubit,
+      calcCubit: calcCubit,
+      calcHistoryCubit: calcHistoryCubit,
+    );
+
     return Column(
       children: [
         Row(
@@ -36,88 +46,37 @@ class CalcButtonsWidget extends StatelessWidget {
               labelColor: Colors.black,
               boxColor: Colors.red,
               content: 'C',
-              onTap: () {
-                firstOperatorCubit.clear();
-                operationCubit.clear();
-                secondOperatorCubit.clear();
-                calcCubit.clear();
-                if (!isOperation && onValueChanged != null) {
-                  onValueChanged!('0');
-                }
-              },
+              onTap: () => keypadCubit.pressClear(
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
             if (isOperation == true) ...[
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
 
               CalcButtonWidget(
-                labelColor: Color(0xff66ff7f),
+                labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: '()',
-                onTap: () {
-                  final op = operationCubit.state;
-                  final first = firstOperatorCubit.state;
-                  final second = secondOperatorCubit.state;
-
-                  final hasOp = op != null && op.isNotEmpty;
-                  final hasSecond = second != null && second.isNotEmpty;
-
-                  if (!hasOp) {
-                    firstOperatorCubit.toggleBrackets();
-                    return;
-                  }
-
-                  if (!hasSecond) {
-                    secondOperatorCubit.toggleBrackets();
-                    return;
-                  }
-
-                  final bool firstOuter =
-                      first.startsWith('(') && first.endsWith(')');
-                  final bool secondOuter =
-                      second.startsWith('(') && second.endsWith(')');
-                  final bool wholePattern =
-                      first.startsWith('(') &&
-                      second.endsWith(')') &&
-                      !firstOuter &&
-                      !secondOuter;
-
-                  if (!firstOuter && !secondOuter && !wholePattern) {
-                    firstOperatorCubit.toggleBrackets();
-                  } else if (firstOuter && !secondOuter) {
-                    firstOperatorCubit.toggleBrackets();
-                    secondOperatorCubit.toggleBrackets();
-                  } else if (!firstOuter && secondOuter) {
-                    final innerSecond = second.substring(1, second.length - 1);
-                    firstOperatorCubit.setRaw('($first');
-                    secondOperatorCubit.setRaw('$innerSecond)');
-                  } else if (wholePattern) {
-                    firstOperatorCubit.setRaw(first.substring(1));
-                    secondOperatorCubit.setRaw(
-                      second.substring(0, second.length - 1),
-                    );
-                  } else {
-                    if (firstOuter) firstOperatorCubit.toggleBrackets();
-                    if (secondOuter) secondOperatorCubit.toggleBrackets();
-                  }
-                },
+                onTap: keypadCubit.pressBrackets,
               ),
 
               const SizedBox(width: 20),
 
               CalcButtonWidget(
-                labelColor: Color(0xff66ff7f),
+                labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: '%',
-                onTap: () => operationCubit.setOperation(operation: '%'),
+                onTap: () => keypadCubit.pressOperation('%'),
               ),
 
               const SizedBox(width: 20),
 
               CalcButtonWidget(
-                labelColor: Color(0xff66ff7f),
+                labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: '÷',
-                onTap: () => operationCubit.setOperation(operation: '÷'),
+                onTap: () => keypadCubit.pressOperation('÷'),
               ),
             ],
           ],
@@ -132,69 +91,47 @@ class CalcButtonsWidget extends StatelessWidget {
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '7',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '7');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '7');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '7',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
-
-            SizedBox(width: 20),
-
+            const SizedBox(width: 20),
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '8',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '8');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '8');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '8',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
-
             const SizedBox(width: 20),
-
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '9',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '9');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '9');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '9',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
             if (isOperation == true) ...[
               const SizedBox(width: 20),
               CalcButtonWidget(
-                labelColor: Color(0xff66ff7f),
+                labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: 'x',
-                onTap: () => operationCubit.setOperation(operation: 'x'),
+                onTap: () => keypadCubit.pressOperation('x'),
               ),
             ],
           ],
         ),
 
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -203,68 +140,47 @@ class CalcButtonsWidget extends StatelessWidget {
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '4',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '4');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '4');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '4',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
-
-            SizedBox(width: 20),
-
+            const SizedBox(width: 20),
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '5',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '5');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '5');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '5',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
             const SizedBox(width: 20),
-
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '6',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '6');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '6');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '6',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
             if (isOperation == true) ...[
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               CalcButtonWidget(
-                labelColor: Color(0xff66ff7f),
+                labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: '-',
-                onTap: () => operationCubit.setOperation(operation: '-'),
+                onTap: () => keypadCubit.pressOperation('-'),
               ),
             ],
           ],
         ),
 
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -273,68 +189,47 @@ class CalcButtonsWidget extends StatelessWidget {
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '1',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '1');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '1');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '1',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
             const SizedBox(width: 20),
-
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '2',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '2');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '2');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '2',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
-
             const SizedBox(width: 20),
-
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '3',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '3 ');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '3');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '3',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
             if (isOperation == true) ...[
               const SizedBox(width: 20),
               CalcButtonWidget(
-                labelColor: Color(0xff66ff7f),
+                labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: '+',
-                onTap: () => operationCubit.setOperation(operation: '+'),
+                onTap: () => keypadCubit.pressOperation('+'),
               ),
             ],
           ],
         ),
 
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -344,117 +239,46 @@ class CalcButtonsWidget extends StatelessWidget {
                 labelColor: Colors.white,
                 boxColor: Colors.white24,
                 content: '+/-',
-                onTap: () {
-                  final op = operationCubit.state;
-                  final second = secondOperatorCubit.state;
-                  final hasOp = op != null && op.isNotEmpty;
-                  final hasSecond = second != null && second.isNotEmpty;
-
-                  if (!hasOp) {
-                    firstOperatorCubit.toggleSign();
-                    return;
-                  }
-
-                  if (!hasSecond) {
-                    secondOperatorCubit.toggleSign();
-                    return;
-                  }
-
-                  final first = firstOperatorCubit.state;
-                  final secondVal = second;
-
-                  bool firstNeg = first.startsWith('-');
-                  bool secondNeg = secondVal.startsWith('-');
-
-                  String addMinus(String s) => s.startsWith('-') ? s : '-$s';
-                  String removeMinus(String s) =>
-                      s.startsWith('-') ? s.substring(1) : s;
-
-                  if (!firstNeg && !secondNeg) {
-                    firstOperatorCubit.setRaw(addMinus(first));
-                  } else if (firstNeg && !secondNeg) {
-                    firstOperatorCubit.setRaw(removeMinus(first));
-                    secondOperatorCubit.setRaw(addMinus(secondVal));
-                  } else if (!firstNeg && secondNeg) {
-                    firstOperatorCubit.setRaw(addMinus(first));
-                    secondOperatorCubit.setRaw(addMinus(secondVal));
-                  } else {
-                    firstOperatorCubit.setRaw(removeMinus(first));
-                    secondOperatorCubit.setRaw(removeMinus(secondVal));
-                  }
-                },
+                onTap: keypadCubit.pressToggleSign,
               ),
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
             ],
-
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '0',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '0');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '0');
-                }
-              },
+              onTap: () => keypadCubit.pressDigit(
+                '0',
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
-
             const SizedBox(width: 20),
             CalcButtonWidget(
               labelColor: Colors.white,
               boxColor: Colors.white24,
               content: '.',
-              onTap: () {
-                if (operationCubit.state == null ||
-                    operationCubit.state?.isEmpty == true) {
-                  firstOperatorCubit.add(value: '.');
-                  if (!isOperation && onValueChanged != null) {
-                    onValueChanged!(firstOperatorCubit.state);
-                  }
-                } else {
-                  secondOperatorCubit.add(value: '.');
-                }
-              },
+              onTap: () => keypadCubit.pressDot(
+                isOperation: isOperation,
+                onValueChanged: onValueChanged,
+              ),
             ),
-
             if (!isOperation) ...[
               const SizedBox(width: 20),
               CalcButtonWidget(
                 labelColor: Colors.white,
                 boxColor: Colors.white24,
                 content: '⌫',
-                onTap: () {
-                  final current = firstOperatorCubit.state;
-                  if (current.isNotEmpty) {
-                    final newVal = current.length == 1
-                        ? ''
-                        : current.substring(0, current.length - 1);
-                    firstOperatorCubit.setRaw(newVal);
-                    if (onValueChanged != null) {
-                      onValueChanged!(newVal.isEmpty ? '0' : newVal);
-                    }
-                  }
-                },
+                onTap: () => keypadCubit.pressBackspace(onValueChanged),
               ),
             ],
-
             if (isOperation == true) ...[
-              SizedBox(width: 20),
+              const SizedBox(width: 20),
               CalcButtonWidget(
                 labelColor: Colors.black,
-                boxColor: Color(0xff66ff7f),
+                boxColor: const Color(0xff66ff7f),
                 content: '=',
-                onTap: () => calcCubit.setResult(
-                  first: firstOperatorCubit.state,
-                  second: secondOperatorCubit.state,
-                  operation: operationCubit.state,
-                  calcHistoryCubit: calcHistoryCubit,
-                ),
+                onTap: keypadCubit.pressEquals,
               ),
             ],
           ],
