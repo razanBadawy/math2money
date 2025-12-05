@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:math2money/config/router.config.dart';
+import 'package:math2money/service/network.service.dart';
 
 void main() {
+  NetworkClientService.init();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(

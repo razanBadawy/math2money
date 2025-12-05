@@ -9,6 +9,14 @@ import 'package:math2money/widgets/calc_button.widget.dart';
 
 class CalcButtonsWidget extends StatelessWidget {
   final bool isOperation;
+  final FirstOperatorCubit firstOperatorCubit;
+  final OperationCubit operationCubit;
+  final SecondOperatorCubit secondOperatorCubit;
+  final CalcCubit calcCubit;
+  final CalcHistoryCubit calcHistoryCubit;
+  final void Function(String)? onValueChanged;
+  final void Function(String)? onConvert;
+
   const CalcButtonsWidget({
     super.key,
     required this.isOperation,
@@ -18,14 +26,8 @@ class CalcButtonsWidget extends StatelessWidget {
     required this.calcCubit,
     required this.calcHistoryCubit,
     this.onValueChanged,
+    this.onConvert,
   });
-
-  final FirstOperatorCubit firstOperatorCubit;
-  final OperationCubit operationCubit;
-  final SecondOperatorCubit secondOperatorCubit;
-  final CalcCubit calcCubit;
-  final CalcHistoryCubit calcHistoryCubit;
-  final void Function(String)? onValueChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -51,27 +53,31 @@ class CalcButtonsWidget extends StatelessWidget {
                 onValueChanged: onValueChanged,
               ),
             ),
+            if (!isOperation) ...[
+              const SizedBox(width: 20),
+              CalcButtonWidget(
+                labelColor: Colors.black,
+                boxColor: const Color(0xff66ff7f),
+                content: 'Conv',
+                onTap: () => keypadCubit.pressConvert(onConvert),
+              ),
+            ],
             if (isOperation == true) ...[
               const SizedBox(width: 20),
-
               CalcButtonWidget(
                 labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: '()',
                 onTap: keypadCubit.pressBrackets,
               ),
-
               const SizedBox(width: 20),
-
               CalcButtonWidget(
                 labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
                 content: '%',
                 onTap: () => keypadCubit.pressOperation('%'),
               ),
-
               const SizedBox(width: 20),
-
               CalcButtonWidget(
                 labelColor: const Color(0xff66ff7f),
                 boxColor: Colors.white24,
@@ -81,9 +87,7 @@ class CalcButtonsWidget extends StatelessWidget {
             ],
           ],
         ),
-
         const SizedBox(height: 10),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -130,9 +134,7 @@ class CalcButtonsWidget extends StatelessWidget {
             ],
           ],
         ),
-
         const SizedBox(height: 10),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -179,9 +181,7 @@ class CalcButtonsWidget extends StatelessWidget {
             ],
           ],
         ),
-
         const SizedBox(height: 10),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -228,9 +228,7 @@ class CalcButtonsWidget extends StatelessWidget {
             ],
           ],
         ),
-
         const SizedBox(height: 10),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

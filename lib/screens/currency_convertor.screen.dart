@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:math2money/cubit/calc.cubit.dart';
 import 'package:math2money/cubit/calc_history.cubit.dart';
 import 'package:math2money/cubit/currency_conv_amount.dart';
-import 'package:math2money/cubit/currency_conv_isegp.dart';
+import 'package:math2money/cubit/currency_selection.cubit.dart';
+import 'package:math2money/cubit/exchange_rate/exchange_rate.cubit.dart';
+import 'package:math2money/cubit/exchange_rate/exchange_rate.state.dart';
 import 'package:math2money/cubit/first_operator.cubit.dart';
 import 'package:math2money/cubit/operation.cubit.dart';
 import 'package:math2money/cubit/second_operator.cubit.dart';
+
 import 'package:math2money/widgets/calc_buttons.widget.dart';
 import 'package:math2money/widgets/conv_result.widget.dart';
 import 'package:math2money/widgets/from_button.widget.dart';
@@ -20,8 +24,6 @@ class CurrencyConvertorScreen extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final headerHeight = screenHeight - 446;
-    final currencyConvAmountCubit = CurrencyConvAmountCubit();
-    final currencyConvIsegpCubit = CurrencyConvIsegp();
 
     return SafeArea(
       child: Scaffold(
@@ -29,11 +31,14 @@ class CurrencyConvertorScreen extends StatelessWidget {
         extendBody: true,
         body: MultiBlocProvider(
           providers: [
-            BlocProvider<CurrencyConvAmountCubit>(
-              create: (ctx) => currencyConvAmountCubit,
+            BlocProvider<ExchangeRateCubit>(
+              create: (_) => ExchangeRateCubit()..fetchExchangeRate(),
             ),
-            BlocProvider<CurrencyConvIsegp>(
-              create: (ctx) => currencyConvIsegpCubit,
+            BlocProvider<CurrencySelectionCubit>(
+              create: (_) => CurrencySelectionCubit(),
+            ),
+            BlocProvider<CurrencyConvAmountCubit>(
+              create: (_) => CurrencyConvAmountCubit(),
             ),
           ],
           child: Stack(
@@ -42,42 +47,91 @@ class CurrencyConvertorScreen extends StatelessWidget {
               SizedBox(
                 height: headerHeight,
                 child: SingleChildScrollView(
-                  child: BlocBuilder<CurrencyConvIsegp, bool>(
-                    builder: (ctx, isEgpToUsd) {
-                      return BlocBuilder<CurrencyConvAmountCubit, String>(
-                        builder: (ctx, state) {
-                          final directionCubit = ctx.read<CurrencyConvIsegp>();
-                          final amountCubit = ctx
-                              .read<CurrencyConvAmountCubit>();
-                          final fromLabel = directionCubit.fromLabel;
-                          final toLabel = directionCubit.toLabel;
-                          final amountText = amountCubit.amountText;
-                          final resultText = amountCubit.resultText;
-                          final resultCurrency = amountCubit.resultCurrency;
-                          return Column(
-                            children: [
-                              FromButtonWidget(
-                                amountText: amountText,
-                                currencyLabel: fromLabel,
-                                onSwap: () {
-                                  directionCubit.toggleDirection();
-                                  final newIsEgpToUsd = directionCubit.state;
-                                  amountCubit.recalcForDirection(
-                                    isEgp: newIsEgpToUsd,
-                                  );
-                                },
-                              ),
-                              ToButtonWidget(currencyLabel: toLabel),
-                              ConvResultWidget(
-                                resultText: resultText.isEmpty
-                                    ? '0.00'
-                                    : resultText,
-                                currencyCode: resultCurrency.isEmpty
-                                    ? directionCubit.toLabel
-                                    : resultCurrency,
-                              ),
-                              const SizedBox(height: 10.0),
-                            ],
+                  child: BlocBuilder<ExchangeRateCubit, ExchangeRateState>(
+                    builder: (ctx, rateState) {
+                      if (rateState is ExchangeRateLoading ||
+                          rateState is ExchangeRateInitial) {
+                        return const SizedBox(
+                          height: 200,
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+                      if (rateState is ExchangeRateFailure) {
+                        return SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: Text(
+                              rateState.message ?? 'Failed to load rates',
+                              style: const TextStyle(color: Colors.red),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+
+                      final successState = rateState as ExchangeRateSuccess;
+                      final rates = successState.exchangeRate.rates;
+                      final currencies = rates.toMap().keys.toList()..sort();
+
+                      return BlocBuilder<CurrencySelectionCubit,
+                          CurrencySelectionState>(
+                        builder: (ctx, selectionState) {
+                          final amountCubit =
+                              ctx.read<CurrencyConvAmountCubit>();
+
+                          amountCubit.updateRates(rates);
+                          amountCubit.updateCurrencies(
+                            from: selectionState.from,
+                            to: selectionState.to,
+                          );
+
+                          return BlocBuilder<CurrencyConvAmountCubit, String>(
+                            builder: (ctx, _) {
+                              final amountText = amountCubit.amountText;
+                              final resultText = amountCubit.resultText;
+                              final resultCurrency =
+                                  amountCubit.resultCurrency.isEmpty
+                                      ? selectionState.to
+                                      : amountCubit.resultCurrency;
+
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  FromButtonWidget(
+                                    amountText: amountText,
+                                    selectedCurrency: selectionState.from,
+                                    currencies: currencies,
+                                    onCurrencyChanged: (code) {
+                                      ctx
+                                          .read<CurrencySelectionCubit>()
+                                          .setFrom(code);
+                                    },
+                                    onSwap: () {
+                                      ctx
+                                          .read<CurrencySelectionCubit>()
+                                          .swap();
+                                    },
+                                  ),
+                                  ToButtonWidget(
+                                    selectedCurrency: selectionState.to,
+                                    currencies: currencies,
+                                    onCurrencyChanged: (code) {
+                                      ctx
+                                          .read<CurrencySelectionCubit>()
+                                          .setTo(code);
+                                    },
+                                  ),
+                                  ConvResultWidget(
+                                    resultText: resultText.isEmpty
+                                        ? '0.00'
+                                        : resultText,
+                                    currencyCode: resultCurrency,
+                                  ),
+                                  const SizedBox(height: 10.0),
+                                ],
+                              );
+                            },
                           );
                         },
                       );
@@ -85,7 +139,6 @@ class CurrencyConvertorScreen extends StatelessWidget {
                   ),
                 ),
               ),
-
               Positioned(
                 bottom: 0,
                 child: SizedBox(
@@ -106,15 +159,19 @@ class CurrencyConvertorScreen extends StatelessWidget {
                             calcCubit: CalcCubit(),
                             calcHistoryCubit: CalcHistoryCubit(),
                             onValueChanged: (text) {
-                              final isEgpToUsd = innerContext
-                                  .read<CurrencyConvIsegp>()
-                                  .state;
-                              innerContext
-                                  .read<CurrencyConvAmountCubit>()
-                                  .updateFromText(
-                                    isEgp: isEgpToUsd,
-                                    rawText: text,
-                                  );
+                              final amountCubit = innerContext
+                                  .read<CurrencyConvAmountCubit>();
+                              if (text == '0') {
+                                amountCubit.clear();
+                              } else {
+                                amountCubit.updateFromText(rawText: text);
+                              }
+                            },
+                            onConvert: (text) {
+                              final amountCubit = innerContext
+                                  .read<CurrencyConvAmountCubit>();
+                              amountCubit.updateFromText(rawText: text);
+                              amountCubit.convert();
                             },
                           ),
                           const SizedBox(height: 20),

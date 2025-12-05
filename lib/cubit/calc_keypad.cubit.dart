@@ -44,7 +44,9 @@ class CalcKeypadCubit extends Cubit<void> {
     if (_editingFirst) {
       firstOperatorCubit.add(value: digit);
       if (!isOperation && onValueChanged != null) {
-        onValueChanged(firstOperatorCubit.state);
+        onValueChanged(firstOperatorCubit.state.isEmpty
+            ? '0'
+            : firstOperatorCubit.state);
       }
     } else {
       secondOperatorCubit.add(value: digit);
@@ -58,7 +60,9 @@ class CalcKeypadCubit extends Cubit<void> {
     if (_editingFirst) {
       firstOperatorCubit.add(value: '.');
       if (!isOperation && onValueChanged != null) {
-        onValueChanged(firstOperatorCubit.state);
+        onValueChanged(firstOperatorCubit.state.isEmpty
+            ? '0'
+            : firstOperatorCubit.state);
       }
     } else {
       secondOperatorCubit.add(value: '.');
@@ -155,9 +159,8 @@ class CalcKeypadCubit extends Cubit<void> {
   void pressBackspace(void Function(String)? onValueChanged) {
     final current = firstOperatorCubit.state;
     if (current.isNotEmpty) {
-      final newVal = current.length == 1
-          ? ''
-          : current.substring(0, current.length - 1);
+      final newVal =
+          current.length == 1 ? '' : current.substring(0, current.length - 1);
       firstOperatorCubit.setRaw(newVal);
       if (onValueChanged != null) {
         onValueChanged(newVal.isEmpty ? '0' : newVal);
@@ -172,5 +175,11 @@ class CalcKeypadCubit extends Cubit<void> {
       operation: operationCubit.state,
       calcHistoryCubit: calcHistoryCubit,
     );
+  }
+
+  void pressConvert(void Function(String)? onConvert) {
+    if (onConvert == null) return;
+    final value = firstOperatorCubit.state;
+    onConvert(value.isEmpty ? '0' : value);
   }
 }

@@ -1,16 +1,16 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CurrencyConvIsegp extends Cubit<bool> {
-  CurrencyConvIsegp() : super(true);
+// class CurrencyConvIsegp extends Cubit<bool> {
+//   CurrencyConvIsegp() : super(true);
 
-  void toggleDirection() {
-    emit(!state);
-  }
+//   void toggleDirection() {
+//     emit(!state);
+//   }
 
-  void setDirection(bool isEgpToUsd) {
-    emit(isEgpToUsd);
-  }
+//   void setDirection(bool isEgpToUsd) {
+//     emit(isEgpToUsd);
+//   }
 
-  String get fromLabel => state ? 'EGP' : 'USD';
-  String get toLabel => state ? 'USD' : 'EGP';
-}
+//   String get fromLabel => state ? 'EGP' : 'USD';
+//   String get toLabel => state ? 'USD' : 'EGP';
+// }
