@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class OperationConvertorWidget extends StatelessWidget {
-  const OperationConvertorWidget({Key? key}) : super(key: key);
+  const OperationConvertorWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +12,7 @@ class OperationConvertorWidget extends StatelessWidget {
         children: [
           Container(
             constraints: const BoxConstraints(maxWidth: 380),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(17),
-              // border: Border.all(color: Colors.white24),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(17)),
             child: Text(
               '100+150',
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:math2money/config/router.config.dart';
-import 'package:math2money/screens/calculator.screen.dart';
 
 void main() {
   runApp(const MyApp());

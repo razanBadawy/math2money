@@ -1,18 +1,36 @@
 import 'package:flutter/material.dart';
 
 class FromButtonWidget extends StatelessWidget {
-  const FromButtonWidget({Key? key}) : super(key: key);
+  final String amountText;
+  final String currencyLabel;
+  final VoidCallback onSwap;
+
+  const FromButtonWidget({
+    super.key,
+    required this.amountText,
+    required this.currencyLabel,
+    required this.onSwap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('From', style: const TextStyle(color: Colors.white, fontSize: 20)),
-
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+          child: Text(
+            'From',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
           decoration: BoxDecoration(
             color: Colors.white24,
             borderRadius: BorderRadius.circular(15.0),
@@ -20,21 +38,40 @@ class FromButtonWidget extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: const [
-                  Text(
-                    'USD - United States Dollar',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ],
+              Text(
+                currencyLabel,
+                style: const TextStyle(color: Colors.white, fontSize: 20),
               ),
-              const Icon(Icons.arrow_drop_down, color: Colors.white),
+            ],
+          ),
+        ),
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+          decoration: BoxDecoration(
+            color: Colors.white24,
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          child: Row(
+            children: [
+              Text(
+                amountText,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
         const SizedBox(height: 10.0),
-
-        const Center(child: Icon(Icons.currency_exchange, color: Colors.white)),
+        Center(
+          child: IconButton(
+            icon: const Icon(Icons.currency_exchange, color: Colors.white),
+            onPressed: onSwap,
+          ),
+        ),
       ],
     );
   }
